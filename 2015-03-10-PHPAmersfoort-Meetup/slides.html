@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Profiling PHP</title>
+
+    <meta name="description" content="An HTML5 presentation about PHP Profiling">
+    <meta name="author" content="Dennis de Greef">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <!--<link rel="stylesheet" href="css/theme/default.css" id="theme">-->
+    <link rel="stylesheet" href="css/theme/moon.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section>
+    <h1>Profiling PHP</h1>
+
+    <h3>A dive into your application</h3>
+
+    <p>
+        <small><a href="http://github.com/dennisdegreef">Dennis de Greef</a> /
+            <a href="http://twitter.com/dennisdegreef">@dennisdegreef</a></small>
+    </p>
+    <p>
+        <small><a href="https://conference.phpbenelux.eu/2015">PHPBenelux Conference 2015</a></small>
+    </p>
+</section><section>
+    <section>
+        <h1>What is Profiling?</h1>
+    </section>
+
+    <section>
+        <h2>Wikipedia</h2>
+
+        <p>
+            <span style="font-weight: bold; color: #eee8d5;">profiling</span> is a form of <span style="font-weight: bold; color: #eee8d5;">dynamic program analysis</span> that <span style="font-weight: bold; color: #eee8d5;">measures</span>, for example, the space (memory) or time complexity of a program,
+            the usage of particular instructions, or the <span style="font-weight: bold; color: #eee8d5;">frequency and duration of function calls</span>. Most commonly, profiling information serves
+            to aid program optimization.
+        </p>
+
+        <aside class="notes">
+            Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+        </aside>
+    </section>
+
+    <section>
+        <h2>So... Dynamic Program Analysis?</h2>
+    </section>
+
+    <section>
+        <h1>Yeah...</h1>
+        <h2>Lets first look at it's counterpart...</h2>
+    </section>
+</section><section>
+    <section>
+        <h1>Static analysis</h1>
+    </section>
+    <section>
+        <h2>Wikipedia</h2>
+
+        <p>
+            <span style="font-weight: bold; color: #eee8d5;">Static program analysis</span> is the analysis of computer software that is performed <span style="font-weight: bold; color: #eee8d5;">without actually executing programs</span>
+        </p>
+        <br/>
+
+        <p>
+
+            The term is usually applied to the analysis performed by an automated tool,
+            with human analysis being called program understanding, program comprehension or code review.
+
+        </p>
+    </section>
+
+    <section>
+        <h1>Static Analysis Tools</h1>
+
+        <p>
+            There are a set of tools which perform static code analysis.<br/>
+            These tools can be integrated within an <i>automated build</i>.<br/>
+        </p>
+        <br/>
+        <ul>
+            <li><a href="http://phpmd.org/">PHP Mess Detector</a></li>
+            <li><a href="https://github.com/sebastianbergmann/phpcpd">PHP Copy/Paste Detector</a></li>
+            <li><a href="http://pear.php.net/PHP_CodeSniffer">PHP CodeSniffer</a></li>
+            <li><a href="http://github.com/sebastianbergmann/phpdcd">PHP Dead Code Detector</a></li>
+        </ul>
+        <br/>
+        <br/>
+
+        <p>
+            There is a nice page containing a predefined set of tools for a build to be found at
+            <a href="http://jenkins-php.org/">Jenkins PHP</a>
+        </p>
+    </section>
+
+
+    <section>
+        <h1>But...</h1>
+    </section>
+
+    <section>
+        <h2>These tools only analyse how your code is structured, not how it behaves.</h2>
+    </section>
+
+
+</section><section>
+    <section>
+        <h1>Dynamic analysis</h1>
+    </section>
+
+    <section>
+        <h2>Wikipedia</h2>
+
+        <p>
+            The analysis of computer software that is performed by <span style="font-weight: bold; color: #eee8d5;">executing programs on a real or virtual processor</span>.<br/>
+            <br/>
+            For dynamic program analysis to be effective,
+            <br/>the target program must be executed with <span style="font-weight: bold; color: #eee8d5;">sufficient test inputs</span> to produce interesting behavior.<br/>
+            <br/>
+            Use of software testing measures such as code coverage helps ensure that an adequate slice of the program's set of possible behaviors has been observed.
+
+        </p>
+    </section>
+
+    <section>
+        <h2>Callstack</h2>
+        <p>
+            A callstack is the <span style="font-weight: bold; color: #eee8d5;">order</span> in which statements are <span style="font-weight: bold; color: #eee8d5;">exectuted</span>.<br />
+            An example commonly known, is an <span style="font-weight: bold; color: #eee8d5;">exception trace</span>. This trace shows all the statements executed before an exception is thrown.
+        </p>
+    </section>
+
+    <section>
+        <h2>Callgraph</h2>
+        <p>
+            A callgraph is a <span style="font-weight: bold; color: #eee8d5;">visual representation</span> of a callstack.<br />
+            In large applications this graph can give you better <span style="font-weight: bold; color: #eee8d5;">insight</span> on how an application is wired.
+        </p>
+    </section>
+
+    <section>
+        <h2>Profiling data</h2>
+
+        <p>
+            Usually, the data gathered with a profiler can be represented in stacks or graphs.<br />
+            They can include information regarding <span style="font-weight: bold; color: #eee8d5;">memory- and cpu-usage</span>.
+        </p>
+    </section>
+</section>
+<section>
+
+    <section>
+        <h1>Why?</h1>
+    </section>
+
+    <section>
+        <h2>Reasons</h2>
+        <ul>
+            <li>Debugging CPU performance</li>
+            <li>Debugging memory performance</li>
+            <li>Debugging IO performance</li>
+            <li>See which function is called how many times</li>
+            <li>Gain insight of the black box that is the application</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Reasons</h2>
+
+        <ul>
+            <li>We live in a digital age where we want everything instantly.</li>
+            <!--<li>33% of broadband users are unwilling to wait more than four seconds.</li>
+            <li>43% of narrowband users will not wait more than six seconds.</li>-->
+            <li>According to a <a href="http://blog.radware.com/applicationdelivery/applicationaccelerationoptimization/2013/05/case-study-page-load-time-conversions/">case study from Radware</a>, 51 percent of online shoppers in the U.S claimed if a site is too slow they will not complete a purchase.</li>
+            <li>Nowadays, search engine indexing also accounts for page load.</li>
+
+        </ul>
+        <br />
+        <br />
+        <br />
+
+        <p><small>
+                <a href="http://www.websiteoptimization.com/speed/tweak/psychology-web-performance/">The psychology of web performance</a><br />
+                <a href="http://www.searchenginejournal.com/seo-101-important-site-speed-2014/111924/">SEO 101: How important is site speed in 2014?</a><br />
+                <a href="http://blog.radware.com/applicationdelivery/applicationaccelerationoptimization/2013/05/case-study-page-load-time-conversions/">Case study from Radware</a>
+        </small></p>
+    </section>
+
+    <section>
+        <h2>Warning!</h2>
+        <br />
+        <blockquote>Premature optimization is the root of all evil<br /> -- Donald Knuth</blockquote>
+        <br />
+
+        <p>Only perform optimization when there is a need to.</p>
+    </section>
+
+</section><section>
+    <section>
+        <h1>Cause of issues</h1>
+    </section>
+
+    <section>
+
+        <h2>Common issues</h2>
+        <ul>
+            <li>Network slowdown</li>
+            <li>Datastore slowdown</li>
+            <li>External resources (API, Filesystems, Network sockets, etc)</li>
+            <li>Bad code(tm)</li>
+        </ul>
+
+
+    </section>
+</section><section>
+
+    <section>
+        <h1>Active vs Passive</h1>
+
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <p><small>
+                <a href="https://blog.engineyard.com/2014/profiling-with-xhprof-xhgui-part-1">Profiling PHP Part 1 (Davey Shafik)</a>
+            </small></p>
+    </section>
+
+    <section>
+        <h2>Active profiler</h2>
+        <ul>
+            <li>Used during development</li>
+            <li>Gather more information than passive profilers <br />(like variables/values)</li>
+            <li>Performance impact is bigger</li>
+            <li>Should _NOT_ be used in production</li>
+            <li>Example: <a href="http://xdebug.org/">Xdebug</a></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Passive profiler</h2>
+        <ul>
+            <li>Minimal impact on performance</li>
+            <li>Gathers less but sufficient information to diagnose issues<br />
+            (Only records function calls and cpu + mem)
+            </li>
+            <li>Examples: <a href="http://php.net/manual/en/book.xhprof.php">XHProf</a>, <a href="http://newrelic.com/">New Relic</a>, <a href="https://blackfire.io/">Blackfire.io</a></li>
+        </ul>
+    </section>
+
+
+</section><section>
+    <section>
+        <h1>Xdebug</h1>
+    </section>
+
+    <section>
+        <h2>Xdebug</h2>
+
+        <ul>
+            <li>Generates <a href="http://valgrind.org/docs/manual/cg-manual.html">cachegrind</a> files (like Valgrind for C)</li>
+            <li>Can be analysed by KCacheGrind among others </li>
+            <li>Cachegrind files are relatively big in size</li>
+            <li>Also a developer tool for breakpoints and remote debugging</li>
+            <li>Active profiler</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Enable xdebug profiling</h2>
+        <pre><code># php.ini settings
+xdebug.profiler_enable=1
+xdebug.profiler_output_dir=/path/to/store/snapshots
+xdebug.profiler_enable_trigger=1</code></pre>
+    </section>
+
+    <section>
+        <h2>Xdebug with KCacheGrind</h2>
+        <img src="images/kcachegrind.png"/>
+    </section>
+
+    <section>
+        <h2>Xdebug in phpstorm</h2>
+        <img src="images/xdebug-phpstorm.png"/>
+    </section>
+
+    <section>
+        <h2>Xdebug in PhpStorm</h2>
+        <img src="images/xdebug-phpstorm-select.png" />
+    </section>
+
+    <section>
+        <h2>Xdebug in PhpStorm</h2>
+        <img src="images/xdebug-phpstorm-analyze.png" />
+    </section>
+
+    <section>
+        <h2>Xdebug in PhpStorm</h2>
+        <img src="images/xdebug-phpstorm-calltree.png" />
+    </section>
+</section><section>
+    <section>
+        <h1>XHProf</h1>
+    </section>
+
+    <section>
+        <h2>XHProf</h2>
+        <ul>
+            <li>Developed by Facebook and released as open-source in 2009</li>
+            <li>PECL extension</li>
+            <li>Lightweight for being a passive profiler</li>
+            <li>Includes webgui for reviewing and comparing profiling data</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Installation</h2>
+                <code><pre>
+# Linux (using apt or yum)
+apt-get install -y php5-xhprof
+
+# OSX (using homebrew)
+brew install php56-xhprof
+
+# For Windows, use PECL or download a .dll somewhere, or compile for your own
+</pre></code>
+    </section>
+
+    <section>
+        <h2>Wordpress example</h2>
+        <pre><code>
+// index.php
+
+xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+
+/** Loads the WordPress Environment and Template */
+require( dirname( __FILE__ ) . '/wp-blog-header.php' );
+
+$xhprof_data = xhprof_disable();
+
+include_once 'xhprof_lib/utils/xhprof_lib.php';
+include_once 'xhprof_lib/utils/xhprof_runs.php';
+
+$xhprof_runs = new XHProfRuns_Default();
+
+$run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>Callstack</h2>
+        <img src="images/wp-callstack.png" />
+    </section>
+
+    <section>
+        <h2>Callgraph</h2>
+        <img src="images/wp-callgraph.png" />
+    </section>
+
+    <section>
+        <h2>Callgraph</h2>
+        <img src="images/wp-callgraph-zoom.png" />
+    </section>
+
+    <section>
+        <h2>Callgraph</h2>
+        <img src="images/wp-callgraph-zoom2.png" />
+    </section>
+
+    <section>
+        <h2>Useful tools</h2>
+        <ul>
+            <img src="images/xhprof-helper-chrome.webp" height="300" width="480"/>
+            <li><a href="https://chrome.google.com/webstore/detail/xhprof-helper/adnlhmmjijeflmbmlpmhilkicpnodphi">XHProf Helper for Chrome</a></li>
+            <li><a href="https://addons.mozilla.org/nl/firefox/addon/xhprof-helper-for-firefox/">XHProf Helper for Firefox</a></li>
+            <li>Sets $_COOKIE['_profile'] to 1</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>XHGui</h2>
+
+        <ul>
+            <li>Web frontend for profile data</li>
+            <li>Requires MongoDB</li>
+            <li>Shows callstacks</li>
+            <li>Shows callgraphs</li>
+            <li>Can compare different runs</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>XHGui</h2>
+        <img src="images/xhgui1.png"/>
+    </section>
+    <section>
+        <h2>XHGui</h2>
+        <img src="images/xhgui2.png"/>
+    </section>
+    <section>
+        <h2>XHGui Compare</h2>
+        <img src="images/xhgui3.png"/>
+    </section>
+    <section>
+        <h2>XHGui Compare</h2>
+        <img src="images/xhgui4.png"/>
+    </section>
+    <section>
+        <h2>XHGui Compare difference</h2>
+        <img src="images/xhgui5.png"/>
+    </section>
+    <section>
+        <h2>XHGui Callstack</h2>
+        <img src="images/xhgui6.png"/>
+    </section>
+</section><section>
+
+    <section>
+        <h1>Link0</h1>
+    </section>
+
+    <section>
+        <h2>Link0/profiler</h2>
+        <ul>
+            <li>Focused on XHProf</li>
+            <li>Has multiple persistence layers for storing profiles
+                <ul>
+                    <li>Memory</li>
+                    <li>Flysystem</li>
+                    <li>Zend\Db\Adapter</li>
+                    <li>MongoDB (work in progress)</li>
+                </ul>
+            </li>
+            <li>Available on composer/packagist</li>
+            <li>Fully Object-orientated</li>
+            <li>100% code coverage</li>
+            <li><a href="http://github.com/link0/profiler">http://github.com/link0/profiler</a></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Getting started</h2>
+        <p>Bootstrapping the profiler</p>
+        <pre><code>$profiler = new \Link0\Profiler\Profiler();
+$profiler->start();
+print_r($profiler->stop());</code></pre>
+
+        <p>Adding a PersistenceHandler</p>
+        <pre><code>$persistenceHandler = new \Link0\Profiler\PersistenceHandler\MemoryHandler();
+$profiler = new \Link0\Profiler\Profiler($persistenceHandler);</code></pre>
+
+        <p>Flysystem example</p>
+        <pre><code>$filesystemAdapter = new \League\Flysystem\Adapter\Local('/tmp/profiler');
+$filesystem = new \Link0\Profiler\Filesystem($filesystemAdapter);
+$persistenceHandler = new \Link0\Profiler\PersistenceHandler\FilesystemHandler($filesystem);
+$profiler = new \Link0\Profiler\Profiler($persistenceHandler);</code></pre>
+    </section>
+
+</section><section>
+    <section>
+        <h1>Future?</h1>
+        <h2>*exciting sounds*</h2>
+    </section>
+
+    <section>
+        <h2>Some ideas</h2>
+
+        <ul>
+            <li>Enable on production with sampling</li>
+            <li>Aggregate all profiles to centralized machine/cluster</li>
+            <li>Integrate into continuous deployment</li>
+            <ul>
+                <li>Run profiling on acceptance environment</li>
+                <li>Alert when compared differences surpass threshold</li>
+            </ul>
+            <li>Codeception integration</li>
+            <ul>
+                <li>Find business use-cases that are slow</li>
+                <li>Make a case for refactoring to the business</li>
+                <li>Focus on the customers emulated experience</li>
+            </ul>
+        </ul>
+
+    </section>
+</section><section>
+    <section>
+        <h1>Any Questions?</h1>
+    </section>
+
+    <section>
+        <h2>Questions? I <3 feedback</h2>
+        <ul>
+            <li>Joind.in: <a href="https://joind.in/13685">https://joind.in/talk/view/13685</a></li>
+            <li>GitHub: <a href="http://github.com/dennisdegreef">http://github.com/dennisdegreef</a></li>
+            <li>Twitter: <a href="http://twitter.com/dennisdegreef">@dennisdegreef</a></li>
+            <li>IRC: link0 on Freenode</li>
+        </ul>
+        <br />
+        <br />
+        <h3>Slides are also on joind.in</h3>
+        <span><img src="http://chart.apis.google.com/chart?chs=400x400&cht=qr&chl=https%3A%2F%2Fjoind.in%2F%2F13685" height="200" width="200" /></span>
+    </section>
+
+    <section>
+        <h2>Useful links</h2>
+
+        <ul>
+            <li><a href="https://confluence.jetbrains.com/display/PhpStorm/Profiling+PHP+applications+with+PhpStorm+and+Xdebug">Profiling PHP with PhpStorm and Xdebug</a></li>
+            <li><a href="https://confluence.jetbrains.com/display/PhpStorm/Profiling+PHP+applications+with+PhpStorm+and+Zend+Debugger">Profiling PHP with PhpStorm and Zend Debugger</a></li>
+            <li><a href="http://www.xdebug.org/docs/profiler">XDebug Profiler documentation</a></li>
+            <li><a href="http://php.net/manual/en/book.xhprof.php">XHProf PHP documentation</a></li>
+            <li><a href="https://blog.engineyard.com/2014/profiling-with-xhprof-xhgui-part-1">Profiling with XHProf and XHGui</a></li>
+            <li><a href="http://github.com/link0/profiler">http://github.com/link0/profiler</a></li>
+        </ul>
+    </section>
+</section>    </div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        //parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        //parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            { src: 'lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            } },
+            { src: 'plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                hljs.initHighlightingOnLoad();
+            } },
+            { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } },
+            { src: 'plugin/notes/notes.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } }
+        ]
+    });
+
+</script>
+
+</body>
+</html>

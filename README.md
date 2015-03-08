@@ -16,6 +16,8 @@ Profiling PHP: A dive into your application
 
 - 2015-03-10 - PHPAmersfoort Meetup
     - [http://joind.in/talk/view/13685](http://joind.in/talk/view/13685)
+    - [http://www.meetup.com/PHPAmersfoort/events/220008620/](http://www.meetup.com/PHPAmersfoort/events/220008620/)
 
 - 2015-03-11 - WordPress Nijmegen Meetup
     - [http://joind.in/talk/view/13644](http://joind.in/talk/view/13644)
+    - [http://www.meetup.com/WordPress-Meetup-Nijmegen/events/219038372/](http://www.meetup.com/WordPress-Meetup-Nijmegen/events/219038372/)

@@ -53,7 +53,7 @@
             <a href="http://twitter.com/dennisdegreef">@dennisdegreef</a></small>
     </p>
     <p>
-        <small><a href="https://conference.phpbenelux.eu/2015">PHPBenelux Conference 2015</a></small>
+        <small><a href="http://www.meetup.com/PHPAmersfoort/events/220008620/">PHPAmersfoort Meetup March 2015</a></small>
     </p>
 </section><section>
     <section>
@@ -240,6 +240,7 @@
             <li>Datastore slowdown</li>
             <li>External resources (API, Filesystems, Network sockets, etc)</li>
             <li>Bad code(tm)</li>
+            <li>Didn't RTFM(tm)</li>
         </ul>
 
 
@@ -277,7 +278,7 @@
             <li>Gathers less but sufficient information to diagnose issues<br />
             (Only records function calls and cpu + mem)
             </li>
-            <li>Examples: <a href="http://php.net/manual/en/book.xhprof.php">XHProf</a>, <a href="http://newrelic.com/">New Relic</a>, <a href="https://blackfire.io/">Blackfire.io</a></li>
+            <li>Examples: <a href="http://php.net/manual/en/book.xhprof.php">XHProf</a> / <a href="https://github.com/FriendsOfPHP/uprofiler">UProfiler</a>, <a href="http://newrelic.com/">New Relic</a>, <a href="https://blackfire.io/">Blackfire.io</a></li>
         </ul>
     </section>
 
@@ -450,23 +451,26 @@ $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
 
     <section>
         <h1>Link0</h1>
+        <h4>(link zero)</h4>
     </section>
 
     <section>
         <h2>Link0/profiler</h2>
         <ul>
-            <li>Focused on XHProf</li>
+            <li>Focused on XHProf and Uprofiler</li>
+            <li>Released v1.0.0 last week!</li>
             <li>Has multiple persistence layers for storing profiles
                 <ul>
                     <li>Memory</li>
                     <li>Flysystem</li>
                     <li>Zend\Db\Adapter</li>
-                    <li>MongoDB (work in progress)</li>
+                    <li>MongoDB (XHGui compatible)</li>
                 </ul>
             </li>
             <li>Available on composer/packagist</li>
-            <li>Fully Object-orientated</li>
-            <li>100% code coverage</li>
+            <li>Symfony2 bundle available to hook into kernel events</li>
+            <li>Fully object-orientated</li>
+            <li>100% code coverage (as far as that's relevant)</li>
             <li><a href="http://github.com/link0/profiler">http://github.com/link0/profiler</a></li>
         </ul>
     </section>
@@ -490,6 +494,12 @@ $profiler = new \Link0\Profiler\Profiler($persistenceHandler);</code></pre>
     </section>
 
 </section><section>
+            <section>
+                <h1>Demo time!</h1>
+                <h4>Oh noes! in a talk?</h4>
+            </section>
+</section><section>
+
     <section>
         <h1>Future?</h1>
         <h2>*exciting sounds*</h2>
@@ -499,7 +509,7 @@ $profiler = new \Link0\Profiler\Profiler($persistenceHandler);</code></pre>
         <h2>Some ideas</h2>
 
         <ul>
-            <li>Enable on production with sampling</li>
+            <li>Enable on production with sampling (1 in 1000 reqs)</li>
             <li>Aggregate all profiles to centralized machine/cluster</li>
             <li>Integrate into continuous deployment</li>
             <ul>
@@ -516,9 +526,6 @@ $profiler = new \Link0\Profiler\Profiler($persistenceHandler);</code></pre>
 
     </section>
 </section><section>
-    <section>
-        <h1>Any Questions?</h1>
-    </section>
 
     <section>
         <h2>Questions? I <3 feedback</h2>

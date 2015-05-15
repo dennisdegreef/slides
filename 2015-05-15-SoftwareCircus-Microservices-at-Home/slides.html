@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Microservices at Home</title>
+
+    <meta name="description" content="An HTML5 presentation about Microservices at Home">
+    <meta name="author" content="Dennis de Greef">
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <!--<link rel="stylesheet" href="css/theme/default.css" id="theme">-->
+    <link rel="stylesheet" href="css/theme/moon.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+    <!--
+        - Intro
+            -Who am i?
+        - ESP8266
+        - NodeMCU
+        - MQTT
+        - Microservices
+
+    -->
+    <section>
+        <section>
+            <h2>Microservices at Home</h2>
+
+            <h3></h3>
+
+            <p>
+                <small><a href="http://github.com/dennisdegreef">Dennis de Greef</a> /
+                    <a href="http://twitter.com/dennisdegreef">@dennisdegreef</a></small>
+            </p>
+            <p>
+                <small><a href="http://www.meetup.com/Software-Circus/events/222396021/">Software Circus Meetup May 2015</a></small>
+            </p>
+        </section>
+
+        <section>
+            <h2>Dennis de Greef</h2>
+
+            <ul>
+                <li>Software engineer at <a href="https://www.transip.nl/">TransIP</a></li>
+                <li>Meetup addict</li>
+                <li>Occasional <a href="https://joind.in/user/view/2429">speaker</a></li>
+                <li>Maker</li>
+                <li>Passion for (software) architecture</li>
+            </ul>
+        </section>
+    </section>
+
+    <section>
+        <section>
+            <h2>Internet of Things</h2>
+        </section>
+        <section>
+            <h2>Internet of Things</h2>
+            <ul>
+                <li>Machine to machine protocols (APIs)</li>
+                <li>'Smart' objects</li>
+                <li>Everything connected</li>
+                <li>Reacting upon eachother</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Domotics</h2>
+            <ul>
+                <li>Z-wave</li>
+                <li>Zigbee</li>
+                <li>Bluetooth</li>
+                <li>RF (radio frequency)</li>
+                <li>WIFI</li>
+                <li>Ethernet</li>
+            </ul>
+
+        </section>
+
+        <section>
+            <h2>IoT Goal</h2>
+            <blockquote>...to enable it to achieve greater value and service by exchanging data with the <strong>manufacturer</strong>, operator and/or other connected devices.</blockquote>
+        </section>
+
+        <section>
+            <h1>manufacturer?</h1>
+        </section>
+
+        <section>
+            <h1>manufacturer</h1>
+            <ul>
+                <li>Philips Hue<ul><li>Use app outside WIFI (optional)</li></ul> </li>
+                <li>Nest<ul><li> Learn habbits from groups</li></ul></li>
+
+            </ul>
+        </section>
+    </section>
+
+    <section>
+        <section>
+            <h1>ESP8266</h1>
+            <img src="images/esp8266-12.jpg" />
+        </section>
+
+        <section>
+            <h1>Different models</h1>
+            <h3>Even more than this</h3>
+            <img src="images/esp8266-models.jpg"/>
+        </section>
+
+        <section>
+            <h1>ESP8266</h1>
+            <ul>
+                <li>Self contained SOC (System on Chip)</li>
+                <li>Integrated TCP/IP protocol stack</li>
+                <li>802.11b/g/n support</li>
+                <li>SDIO 1.1 / 2.0, SPI, UART</li>
+                <li>Currently going for ~4 USD</li>
+                <li>Works on 3.3 volts max 200mA</li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>ESP8266</h1>
+            <ul>
+                <li>Default firmware through AT-commands</li>
+                <li>ESP-01 model on top of Arduino</li>
+                <li>Alternate firmware available</li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>ESP8266</h1>
+            <h3>AT-commands</h3>
+            <pre><code>AT+RST                                 // restart the module
+AT+CWMODE=?                            // wifi mode 1= Sta, 2= AP, 3=both
+AT+CWLAP                               // list the AP
+AT+CIPSTATUS                           // get the connection status
+AT+CIPSTART=4,"TCP","X1.X2.X3.X4",9999 // TCP server
+AT+CIPSEND                             // send data</code></pre>
+        </section>
+    </section>
+
+    <section>
+        <section>
+            <h1>NodeMCU</h1>
+        </section>
+        <section>
+            <h1>NodeMCU</h1>
+
+            <ul>
+                <li>Based on Lua 5.1.4</li>
+                <li>Currently v0.9.5</li>
+                <li>Easy to access wireless router</li>
+                <li>Event-Driven programming preferred</li>
+                <li>~400k downloads</li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>Modules</h1>
+            <ul>
+                <li>Filesystem (flash)</li>
+                <li>WIFI (client or AP)</li>
+                <li>GPIO (Digital IO)</li>
+                <li>Network (TCP/UDP)</li>
+                <li>I2C (Master/slave comm)</li>
+                <li>UART (Serial)</li>
+                <li>MQTT (Message queue)</li>
+                <li>WS2812B (RGB LEDs)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Example</h2>
+            <h3>Working with files</h3>
+            <pre><code>
+file.open("hello.lua","w+")
+file.writeline([[print("hello nodemcu")]])
+file.writeline([[print(node.heap())]])
+file.close()
+
+node.compile("hello.lua")
+dofile("hello.lua")
+dofile("hello.lc")
+            </code></pre>
+        </section>
+
+        <section>
+            <h1>Example</h1>
+            <h3>Connecting with WIFI networks</h3>
+            <pre><code>
+function listap(t)
+    for ssid,v in pairs(t) do
+        authmode, rssi, bssid, channel = string.match(v, "(%d),(-?%d+),(%x%x:%x%x:%x%x:%x%x:%x%x:%x%x),(%d+)")
+        print(ssid,authmode,rssi,bssid,channel)
+    end
+end
+wifi.sta.getap(listap)
+
+print(wifi.sta.getip())
+--nil
+wifi.setmode(wifi.STATION)
+wifi.sta.config("SSID","password")
+print(wifi.sta.getip())
+--192.168.18.110
+            </code></pre>
+        </section>
+
+        <section>
+            <h1>Example</h1>
+            <h3>HTTP client</h3>
+            <pre><code>
+conn=net.createConnection(net.TCP, false)
+conn:on("receive", function(conn, pl) print(pl) end)
+conn:connect(80, "121.41.33.127")
+conn:send("GET / HTTP/1.1\r\nHost: www.nodemcu.com\r\n"
+.."Connection: keep-alive\r\nAccept: */*\r\n\r\n")
+            </code></pre>
+        </section>
+
+        <section>
+            <h1>Example</h1>
+            <h3>MQTT client</h3>
+            <pre><code>m = mqtt.Client("clientid", 120, "user", "password")
+m:on("connect", function(con) print ("connected") end)
+m:on("offline", function(con) print ("offline") end)
+m:on("message", function(conn, topic, data)
+    print(topic .. ":" )
+    if data ~= nil then
+        print(data)
+    end
+end)
+m:connect("192.168.11.118", 1880, 0, function(conn) print("connected") end)
+m:subscribe("/topic",0, function(conn) print("subscribe success") end)
+m:publish("/topic","hello",0,0, function(conn) print("sent") end)
+m:close();</code></pre>
+        </section>
+    </section>
+
+    <section>
+
+        <section>
+            <h1>MQTT?</h1>
+        </section>
+
+        <section>
+            <h1>MQTT</h1>
+            <h3>Message Queue Telemetry Transport</h3>
+        </section>
+
+        <section>
+            <h1>MQTT</h1>
+            <ul>
+                <li>Publish/Subscribe (PubSub)</li>
+                <li>Lightweight messaging protocol on TCP/IP</li>
+                <li>Like instant messaging for software</li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>MQTT</h1>
+            <img src="images/mqtt.png" />
+        </section>
+
+        <section>
+            <h1>Message broker</h1>
+            <ul>
+                <li>Central server for clients</li>
+                <li>Preferably MQTT 3.1.1</li>
+                <li>I use Mosquitto</li>
+            </ul>
+        </section>
+
+    </section>
+
+    <section>
+        <section>
+            <h1>Ideas</h1>
+            <ul>
+                <li>Controlling a WS2812B LED strip</li>
+                <li>Reading a temperature and humidity sensor</li>
+                <li>Reading out gas and electra readings from Smartmeter</li>
+                <li>Controlling the air circulation system inside my house (nRF)</li>
+                <li>Controlling 433Mhz equipment like power outlets</li>
+            </ul>
+        </section>
+    </section>
+
+    <section>
+        <section>
+            <h1>Microservices?</h1>
+        </section>
+
+        <section>
+            <h2>Software architecture style</h2>
+
+            <ul>
+                <li>Understandable within ~15 mins</li>
+                <li>Easy to (unit)test</li>
+                <li>Easy to replace</li>
+                <li>Promotes continuous delivery</li>
+                <li>Unix philosophy
+                    <ul><li>Do one thing, and do it well</li></ul>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Microservices</h2>
+
+            <ul>
+                <li>Service that acts as an MQTT <-> Hue REST API bridge</li>
+                <li>Service that parses syslog for WIFI clients and publishes MQTT</li>
+                <li>Service that broadcasts presence from wifi clients</li>
+                <li>Service that switches lights off when everybody away</li>
+            </ul>
+            <br /><br />
+            <a href="https://github.com/dennisdegreef/mqtt-hue-bridge">https://github.com/dennisdegreef/mqtt-hue-bridge</a>
+        </section>
+
+        <section>
+            <h2>Event Sourcing</h2>
+            <ul>
+                <li>Stores events instead of state</li>
+                <li>MQTT messages are events</li>
+                <li>I store them in MongoDB or ElasticSearch</li>
+                <li>Perform data analysis to detect behaviour for example</li>
+            </ul>
+            <br /><br />
+            <a href="https://github.com/dennisdegreef/mqtt-mongo-recorder">https://github.com/dennisdegreef/mqtt-mongo-recorder</a>
+        </section>
+    </section>
+
+
+    <section>
+        <h2>Questions? I <3 feedback</h2>
+        <ul>
+            <!--<li>Joind.in: <a href="https://joind.in/14561">https://joind.in/14561</a></li>-->
+            <li>GitHub: <a href="http://github.com/dennisdegreef">http://github.com/dennisdegreef</a></li>
+            <li>Twitter: <a href="http://twitter.com/dennisdegreef">@dennisdegreef</a></li>
+            <li>Blog: <a href="www.dennisdegreef.net/2015/05/microservices-at-home/">http://www.dennisdegreef.net/</a></li>
+            <li>IRC: link0 on Freenode</li>
+        </ul>
+        <br />
+        <!--
+        <br />
+        <h3>Slides are also on joind.in</h3>
+        <span><img src="http://chart.apis.google.com/chart?chs=400x400&cht=qr&chl=https%3A%2F%2Fjoind.in%2F%2F14561" height="200" width="200" /></span>
+        -->
+    </section>
+
+    
+</section>    </div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        //parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        //parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            { src: 'lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            } },
+            { src: 'plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                hljs.initHighlightingOnLoad();
+            } },
+            { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } },
+            { src: 'plugin/notes/notes.js', async: true, condition: function () {
+                return !!document.body.classList;
+            } }
+        ]
+    });
+
+</script>
+
+</body>
+</html>
